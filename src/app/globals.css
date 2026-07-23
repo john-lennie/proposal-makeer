@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f1e8;
+  --foreground: #20231d;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-paper: #f5f1e8;
+  --color-cream: #f0ebdf;
+  --color-ink: #20231d;
+  --color-olive: #677057;
+  --color-sage: #bdc5a8;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-display: Georgia, "Times New Roman", serif;
+  --breakpoint-xs: 28rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+button,
+a,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  outline-offset: 3px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #677057;
+  outline-offset: 3px;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: #c8cfb5;
+  color: #20231d;
+}
+
+.font-display {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.eyebrow {
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.19em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.button {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  padding: 0.75rem 1.2rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.button-dark {
+  background: #20231d;
+  color: #f5f1e8;
+}
+
+.button-dark:hover {
+  background: #414639;
+}
+
+.button-light {
+  border: 1px solid rgb(32 35 29 / 14%);
+  background: #fbfaf7;
+  color: #20231d;
+}
+
+.button-light:hover {
+  background: #efede7;
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-bottom: 1px solid rgb(32 35 29 / 35%);
+  padding-block: 0.25rem;
+  font-weight: 550;
+  transition: border-color 160ms ease;
+}
+
+.text-link:hover {
+  border-color: currentColor;
+}
+
+.proposal-section {
+  padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 8vw, 8rem);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  background: #dfe4d2;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 650;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.editor-panel {
+  border: 1px solid rgb(32 35 29 / 10%);
+  border-radius: 0.8rem;
+  background: #fbfaf7;
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  box-shadow: 0 8px 30px rgb(32 35 29 / 4%);
+}
+
+.field-label {
+  margin-bottom: 0.55rem;
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+
+.editor-panel input,
+.editor-panel textarea {
+  width: 100%;
+  border: 1px solid rgb(32 35 29 / 14%);
+  border-radius: 0.45rem;
+  background: white;
+  padding: 0.8rem 0.9rem;
+  color: #20231d;
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.editor-panel input:hover,
+.editor-panel textarea:hover {
+  border-color: rgb(32 35 29 / 28%);
+}
+
+.editor-panel input:focus,
+.editor-panel textarea:focus {
+  border-color: #677057;
+  box-shadow: 0 0 0 3px rgb(103 112 87 / 12%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
