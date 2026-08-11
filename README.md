@@ -144,3 +144,29 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Production launch TODO
+
+Production authentication email is intentionally not configured yet. Complete
+all of the following before deploying the application for real users:
+
+- [ ] Purchase or obtain a domain with editable DNS records.
+- [ ] Add the domain (or a dedicated sending subdomain) to Resend.
+- [ ] Add Resend's SPF and DKIM records at the DNS provider and wait for the
+      domain to show as verified.
+- [ ] Create a Resend API key with **Sending access** restricted to the verified
+      domain.
+- [ ] Add `RESEND_API_KEY` to the Vercel Production environment as a sensitive
+      value.
+- [ ] Add `AUTH_EMAIL_FROM` using the verified domain, for example
+      `Sonder <auth@example.com>`.
+- [ ] Confirm `BETTER_AUTH_URL` exactly matches the final HTTPS production
+      origin, without a trailing slash.
+- [ ] Redeploy after configuring the variables; Vercel environment changes do
+      not affect previous deployments.
+- [ ] Test sign-up verification and password-reset delivery with multiple email
+      providers, and confirm every link uses the production origin.
+
+Do not use Resend's test domain for a real launch. Production builds fail when
+email delivery is missing so verification cannot be accidentally disabled for
+real users.
