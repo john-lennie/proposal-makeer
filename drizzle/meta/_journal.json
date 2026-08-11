@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1784829915292,
+      "tag": "0000_noisy_centennial",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784829950016,
+      "tag": "0001_public_obadiah_stane",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784837820196,
+      "tag": "0002_pink_living_mummy",
+      "breakpoints": true
+    }
+  ]
+}

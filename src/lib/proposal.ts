@@ -42,8 +42,12 @@ export interface DemoProposal {
   title: string;
   client: string;
   clientLocation: string;
+  dateLabel: string;
   company: string;
   companyTagline: string;
+  currency: string;
+  acceptLabel: string;
+  declineLabel: string;
   revision: number;
   status: "draft" | "published" | "accepted" | "declined";
   updatedAt: string;
@@ -63,8 +67,12 @@ export const demoProposal: DemoProposal = {
   title: "A considered move to Montréal",
   client: "Alder House",
   clientLocation: "Toronto → Montréal",
+  dateLabel: "September 2026",
   company: "North & Finch",
   companyTagline: "Private moves, thoughtfully managed.",
+  currency: "CAD",
+  acceptLabel: "Accept proposal",
+  declineLabel: "Decline",
   revision: 2,
   status: "published",
   updatedAt: "July 21, 2026",
@@ -227,10 +235,10 @@ export const demoProposal: DemoProposal = {
 
 export const proposalSections = demoProposal.sections;
 
-export function formatCurrency(amount: number) {
+export function formatCurrency(amount: number, currency = "CAD") {
   return new Intl.NumberFormat("en-CA", {
     style: "currency",
-    currency: "CAD",
+    currency,
     maximumFractionDigits: 0,
   }).format(amount);
 }

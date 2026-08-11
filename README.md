@@ -21,11 +21,111 @@ You can start editing the page by modifying `src/app/page.tsx`. The page auto-up
 ## Commands
 
 ```bash
-pnpm dev                  # Start the development server
-pnpm build                # Create a production build
-pnpm start                # Start the production server
-pnpm lint                 # Run ESLint
-pnpm exec tsc --noEmit    # Run TypeScript checks
+pnpm dev          # Start the development server
+pnpm build        # Create a production build
+pnpm start        # Start the production server
+pnpm test         # Run all Vitest tests
+pnpm test:authorization # Run cross-workspace authorization integration tests
+pnpm lint         # Run ESLint
+pnpm typecheck    # Run TypeScript checks
+```
+
+## Testing
+
+Server-side integration tests use Vitest and the PostgreSQL database configured
+by `DATABASE_URL` in `.env.local`. Authorization fixtures use unique IDs and are
+removed after each run.
+
+```bash
+pnpm test:authorization
+```
+
+## Database setup
+
+The application uses PostgreSQL with Drizzle ORM.
+
+1. Create a local environment file:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Set `DATABASE_URL` in `.env.local` to a PostgreSQL connection string. Never
+   commit this file or paste credentials into source code.
+
+   For Vercel production runtime traffic, use Neon's pooled connection string
+   (the hostname normally contains `-pooler`). Keep the direct Neon connection
+   string for the single migration job; do not use it in application functions.
+
+3. Generate a Better Auth secret and add it to `.env.local`:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   Set `BETTER_AUTH_URL=http://localhost:3000` for local development. Configure
+   `RESEND_API_KEY` and `AUTH_EMAIL_FROM` to deliver email verification and
+   password-reset messages.
+
+4. Review and apply the committed migrations:
+
+   ```bash
+   pnpm db:check
+   pnpm db:migrate
+   ```
+
+5. Seed the fictional North & Finch demo proposal:
+
+   ```bash
+   pnpm db:seed
+   ```
+
+The seed is repeatable and uses stable IDs. It inserts only the demo workspace,
+client, proposal draft, and published revision.
+
+### Database commands
+
+```bash
+pnpm db:generate   # Generate SQL migrations from schema changes
+pnpm db:check      # Check migration files for consistency
+pnpm db:migrate    # Apply pending migrations
+pnpm db:studio     # Open Drizzle Studio
+pnpm db:seed       # Seed the local demo data
+```
+
+The typed schema is in `src/db/schema.ts`, generated SQL migrations are in
+`drizzle/`, and application queries are isolated in `src/data/`. Routes and
+components should use the data-access functions rather than importing the
+database client directly.
+
+See [docs/production-database.md](docs/production-database.md) for the Vercel
+connection setup, safe migration order, fresh-branch verification, and recovery
+checklist.
+
+## Authentication
+
+Better Auth provides email/password identity, sessions, email verification, and
+password resets. Authentication data is stored in PostgreSQL through the
+official Drizzle adapter.
+
+Run the application and visit:
+
+- `/sign-up` to create an account and its first workspace.
+- `/sign-in` to start a session.
+- `/forgot-password` to request a reset link.
+
+The dashboard, proposal creation, editor, and private preview routes require an
+active session and active `WorkspaceMember` record. The marketing page and
+published proposals under `/p/[slug]` remain public.
+
+Required environment variables:
+
+```text
+DATABASE_URL
+BETTER_AUTH_URL
+BETTER_AUTH_SECRET
+RESEND_API_KEY
+AUTH_EMAIL_FROM
 ```
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

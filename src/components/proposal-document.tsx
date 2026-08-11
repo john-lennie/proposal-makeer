@@ -1,22 +1,34 @@
-import type { DemoProposal } from "@/lib/proposal";
+import type {
+  DemoProposal,
+  ProposalSection,
+  ProposalSectionId,
+} from "@/lib/proposal";
 import { formatCurrency } from "@/lib/proposal";
 
 interface ProposalDocumentProps {
   proposal: DemoProposal;
   mode?: "public" | "preview";
+  responseForm?: React.ReactNode;
 }
 
 export function ProposalDocument({
   proposal,
   mode = "public",
+  responseForm,
 }: ProposalDocumentProps) {
-  const section = (id: string) =>
-    proposal.sections.find((item) => item.id === id)!;
+  const section = (id: ProposalSectionId): ProposalSection =>
+    proposal.sections.find((item) => item.id === id) ?? {
+      id,
+      label: "",
+      eyebrow: "",
+      title: "",
+      body: "",
+    };
   const total = proposal.pricing.reduce((sum, item) => sum + item.amount, 0);
 
-  return (
-    <article className="proposal-document bg-[#f1ede3] text-[#20231d]">
+  const sectionElements = [
       <section
+        key="cover"
         id="cover"
         className="proposal-cover relative flex min-h-[92vh] scroll-mt-20 flex-col justify-between overflow-hidden px-6 pb-10 pt-28 sm:px-10 lg:px-[8vw] lg:pb-14"
       >
@@ -30,8 +42,7 @@ export function ProposalDocument({
         <div className="relative z-10 max-w-5xl py-24">
           <p className="eyebrow">{section("cover").eyebrow}</p>
           <h1 className="mt-6 max-w-4xl font-display text-[clamp(4rem,9vw,9rem)] leading-[.84] tracking-[-0.06em]">
-            A considered move,
-            <span className="block italic">beautifully handled.</span>
+            {section("cover").title}
           </h1>
         </div>
         <div className="relative z-10 grid gap-5 border-t border-current/20 pt-5 text-sm sm:grid-cols-3">
@@ -51,12 +62,13 @@ export function ProposalDocument({
             <span className="block text-xs uppercase tracking-[.16em] opacity-50">
               {mode === "preview" ? "Draft preview" : `Revision ${proposal.revision}`}
             </span>
-            <span className="mt-1 block">September 2026</span>
+            <span className="mt-1 block">{proposal.dateLabel}</span>
           </div>
         </div>
-      </section>
+      </section>,
 
       <section
+        key="overview"
         id="overview"
         className="proposal-section scroll-mt-20 bg-[#262a22] text-[#f4f0e7]"
       >
@@ -69,9 +81,13 @@ export function ProposalDocument({
             {section("overview").body}
           </p>
         </div>
-      </section>
+      </section>,
 
-      <section id="objectives" className="proposal-section scroll-mt-20">
+      <section
+        key="objectives"
+        id="objectives"
+        className="proposal-section scroll-mt-20"
+      >
         <div className="grid gap-12 lg:grid-cols-[.72fr_1.28fr] lg:gap-24">
           <div>
             <p className="eyebrow">{section("objectives").eyebrow}</p>
@@ -91,9 +107,10 @@ export function ProposalDocument({
             ))}
           </ol>
         </div>
-      </section>
+      </section>,
 
       <section
+        key="scope"
         id="scope"
         className="proposal-section scroll-mt-20 border-y border-ink/10 bg-[#e2dfd2]"
       >
@@ -123,9 +140,13 @@ export function ProposalDocument({
             </div>
           ))}
         </div>
-      </section>
+      </section>,
 
-      <section id="deliverables" className="proposal-section scroll-mt-20">
+      <section
+        key="deliverables"
+        id="deliverables"
+        className="proposal-section scroll-mt-20"
+      >
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-24">
           <div>
             <p className="eyebrow">{section("deliverables").eyebrow}</p>
@@ -147,9 +168,10 @@ export function ProposalDocument({
             ))}
           </ul>
         </div>
-      </section>
+      </section>,
 
       <section
+        key="timeline"
         id="timeline"
         className="proposal-section scroll-mt-20 bg-[#c8cfb5]"
       >
@@ -177,9 +199,13 @@ export function ProposalDocument({
             </div>
           ))}
         </div>
-      </section>
+      </section>,
 
-      <section id="pricing" className="proposal-section scroll-mt-20">
+      <section
+        key="pricing"
+        id="pricing"
+        className="proposal-section scroll-mt-20"
+      >
         <div className="grid gap-12 lg:grid-cols-[.7fr_1.3fr] lg:gap-24">
           <div>
             <p className="eyebrow">{section("pricing").eyebrow}</p>
@@ -202,7 +228,7 @@ export function ProposalDocument({
                     <p className="mt-1 text-sm text-ink/50">{item.detail}</p>
                   </div>
                   <span className="font-mono text-sm">
-                    {formatCurrency(item.amount)}
+                    {formatCurrency(item.amount, proposal.currency)}
                   </span>
                 </div>
               ))}
@@ -215,14 +241,15 @@ export function ProposalDocument({
                 </span>
               </div>
               <span className="font-display text-5xl tracking-[-0.04em] sm:text-6xl">
-                {formatCurrency(total)}
+                {formatCurrency(total, proposal.currency)}
               </span>
             </div>
           </div>
         </div>
-      </section>
+      </section>,
 
       <section
+        key="terms"
         id="terms"
         className="proposal-section scroll-mt-20 border-y border-ink/10 bg-[#ded7c7]"
       >
@@ -244,9 +271,10 @@ export function ProposalDocument({
             ))}
           </ol>
         </div>
-      </section>
+      </section>,
 
       <section
+        key="acceptance"
         id="acceptance"
         className="proposal-section scroll-mt-20 bg-[#262a22] text-[#f4f0e7]"
       >
@@ -260,20 +288,33 @@ export function ProposalDocument({
           <p className="mx-auto mt-7 max-w-xl text-lg leading-8 text-white/65">
             {section("acceptance").body}
           </p>
-          <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
-            <button type="button" className="button bg-[#d6dcbf] text-ink hover:bg-white">
-              Accept proposal
-            </button>
-            <button type="button" className="button border border-white/25 text-white hover:bg-white/10">
-              Decline
-            </button>
-          </div>
+          {mode === "public" && responseForm ? (
+            responseForm
+          ) : (
+            <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+              <button type="button" disabled className="button bg-[#d6dcbf] text-ink opacity-55">
+                {proposal.acceptLabel}
+              </button>
+              <button type="button" disabled className="button border border-white/25 text-white opacity-55">
+                {proposal.declineLabel}
+              </button>
+            </div>
+          )}
           <p className="mt-6 text-xs leading-5 text-white/40">
-            Valid until {proposal.validUntil}. Acceptance applies to revision{" "}
-            {proposal.revision}.
+            {mode === "preview"
+              ? "This private preview reflects the current draft."
+              : `Valid until ${proposal.validUntil}. Acceptance applies to revision ${proposal.revision}.`}
           </p>
         </div>
-      </section>
+      </section>,
+  ];
+  const sectionsById = new Map(
+    sectionElements.map((element) => [element.key, element]),
+  );
+
+  return (
+    <article className="proposal-document bg-[#f1ede3] text-[#20231d]">
+      {proposal.sections.map(({ id }) => sectionsById.get(id))}
     </article>
   );
 }

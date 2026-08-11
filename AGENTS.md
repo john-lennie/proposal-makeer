@@ -43,6 +43,11 @@ This is a web application for creating polished, interactive business proposals 
 
 # Testing
 
+- Vitest is the test framework for server-side business logic and PostgreSQL
+  integration tests.
+- Run all tests with `pnpm test`.
+- Run cross-workspace authorization tests with `pnpm test:authorization`.
+
 - Add tests for business rules, data validation, permissions, publishing behaviour, and other logic where regressions would be costly.
 - Prefer small focused tests over broad brittle tests.
 - Do not add a testing framework until the project has logic that clearly benefits from automated tests.
