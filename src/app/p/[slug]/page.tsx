@@ -7,23 +7,28 @@ import { ProposalResponseForm } from "@/components/proposal-response-form";
 import { PublicProposalNav } from "@/components/public-proposal-nav";
 import { getPublishedProposalBySlug } from "@/data/proposals";
 import { selectPublicProposal } from "@/lib/published-proposal";
+import { verifyProposalResponseToken } from "@/lib/proposal-response-token";
 
 interface PublicProposalPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ response?: string | string[] }>;
 }
 
 export const dynamic = "force-dynamic";
 
 const getPublicProposal = cache(async (slug: string) => {
   const publishedRevision = await getPublishedProposalBySlug(slug);
-  return selectPublicProposal(publishedRevision);
+  return {
+    publishedRevision,
+    proposal: selectPublicProposal(publishedRevision),
+  };
 });
 
 export async function generateMetadata({
   params,
 }: PublicProposalPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const proposal = await getPublicProposal(slug);
+  const { proposal } = await getPublicProposal(slug);
 
   if (!proposal) {
     return {
@@ -41,13 +46,22 @@ export async function generateMetadata({
 
 export default async function PublicProposalPage({
   params,
+  searchParams,
 }: PublicProposalPageProps) {
   const { slug } = await params;
-  const proposal = await getPublicProposal(slug);
+  const { response } = await searchParams;
+  const { proposal, publishedRevision } = await getPublicProposal(slug);
 
   if (!proposal) {
     notFound();
   }
+
+  const responseToken =
+    typeof response === "string" &&
+    publishedRevision &&
+    verifyProposalResponseToken(publishedRevision.revisionId, response)
+      ? response
+      : undefined;
 
   return (
     <main>
@@ -66,6 +80,7 @@ export default async function PublicProposalPage({
                   ? "DECLINED"
                   : undefined
             }
+            responseToken={responseToken}
           />
         }
       />

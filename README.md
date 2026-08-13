@@ -118,6 +118,13 @@ The dashboard, proposal creation, editor, and private preview routes require an
 active session and active `WorkspaceMember` record. The marketing page and
 published proposals under `/p/[slug]` remain public.
 
+Published proposal content is publicly viewable to anyone with its URL, but
+acceptance and decline require the revision-bound private response link shown to
+the proposal owner after publishing. That link is sensitive: share it only with
+the intended client. Republishing creates a new link and prevents the previous
+revision's link from deciding on the new revision. Rotating
+`BETTER_AUTH_SECRET` also invalidates outstanding response links.
+
 Required environment variables:
 
 ```text

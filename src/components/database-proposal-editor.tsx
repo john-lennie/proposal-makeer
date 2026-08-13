@@ -223,10 +223,10 @@ function PublicationControls({
       {isPublished && (
         <>
           <Link
-            href={`/p/${proposal.publication.currentPublishedSlug}`}
+            href={proposal.publication.currentResponseUrl ?? `/p/${proposal.publication.currentPublishedSlug}`}
             className="button button-light h-10 px-4"
           >
-            View published
+            Open client link
           </Link>
           <form
             action={unpublishAction}
@@ -321,7 +321,15 @@ function PublicationFeedback({
         <>
           {" "}
           <Link className="underline" href={state.publicUrl}>
-            Open public proposal
+            Open public preview
+          </Link>
+        </>
+      )}
+      {state.responseUrl && (
+        <>
+          {" "}
+          <Link className="underline" href={state.responseUrl}>
+            Open client response link
           </Link>
         </>
       )}

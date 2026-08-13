@@ -67,6 +67,16 @@ import {
 } from "@/db/schema";
 import type { ProposalSectionContent } from "@/db/types";
 import { createDefaultProposalSections } from "@/lib/draft-proposal";
+import { createProposalResponseToken } from "@/lib/proposal-response-token";
+
+function responseInput(revisionId: string, decision: "ACCEPTED" | "DECLINED") {
+  return {
+    decision,
+    responseToken: createProposalResponseToken(revisionId),
+    respondentName: "Authorized Client",
+    respondentEmail: "client@example.com",
+  };
+}
 
 const runId = randomUUID().slice(0, 8);
 const ids = {
@@ -683,14 +693,20 @@ describe("cross-workspace proposal authorization", () => {
   test("public access succeeds for a published proposal without authentication", async () => {
     await expect(getPublishedProposalBySlug(slugs.proposalA)).resolves.not.toBeNull();
     await expect(
-      PublicProposalPage({ params: Promise.resolve({ slug: slugs.proposalA }) }),
+      PublicProposalPage({
+        params: Promise.resolve({ slug: slugs.proposalA }),
+        searchParams: Promise.resolve({}),
+      }),
     ).resolves.toBeTruthy();
   });
 
   test("public access to an unpublished proposal returns not found", async () => {
     await expect(getPublishedProposalBySlug(slugs.proposalB)).resolves.toBeNull();
     await expect(
-      PublicProposalPage({ params: Promise.resolve({ slug: slugs.proposalB }) }),
+      PublicProposalPage({
+        params: Promise.resolve({ slug: slugs.proposalB }),
+        searchParams: Promise.resolve({}),
+      }),
     ).rejects.toBeInstanceOf(NotFoundError);
   });
 
@@ -741,7 +757,7 @@ describe("cross-workspace proposal authorization", () => {
     await expect(
       recordPublicProposalResponse({
         slug: slugs.proposalB,
-        decision: "ACCEPTED",
+        ...responseInput(ids.proposalB, "ACCEPTED"),
       }),
     ).resolves.toEqual({ status: "not_found", message: "Proposal not found." });
   });
@@ -763,7 +779,7 @@ describe("cross-workspace proposal authorization", () => {
     await expect(
       recordPublicProposalResponse({
         slug: slugs.proposalA,
-        decision: "ACCEPTED",
+        ...responseInput(current!.revisionId, "ACCEPTED"),
       }),
     ).resolves.toEqual({
       status: "unavailable",
@@ -781,10 +797,21 @@ describe("cross-workspace proposal authorization", () => {
 
   test("a response is recorded only against the current published revision", async () => {
     const current = await getPublishedProposalBySlug(slugs.proposalA);
+
     await expect(
       recordPublicProposalResponse({
         slug: slugs.proposalA,
-        decision: "ACCEPTED",
+        ...responseInput(ids.proposalB, "DECLINED"),
+      }),
+    ).resolves.toEqual({
+      status: "unavailable",
+      message: "This proposal is no longer available for a response.",
+    });
+
+    await expect(
+      recordPublicProposalResponse({
+        slug: slugs.proposalA,
+        ...responseInput(current!.revisionId, "ACCEPTED"),
       }),
     ).resolves.toEqual({ status: "ok", decision: "ACCEPTED" });
 
@@ -792,13 +819,32 @@ describe("cross-workspace proposal authorization", () => {
       revisionId: current!.revisionId,
       decision: "ACCEPTED",
     });
+
+    const recorded = await database
+      .select({
+        respondentName: proposalResponses.respondentName,
+        respondentEmail: proposalResponses.respondentEmail,
+        responseTokenHash: proposalResponses.responseTokenHash,
+      })
+      .from(proposalResponses)
+      .where(eq(proposalResponses.proposalRevisionId, current!.revisionId))
+      .limit(1)
+      .then((rows) => rows[0]);
+    expect(recorded).toMatchObject({
+      respondentName: "Authorized Client",
+      respondentEmail: "client@example.com",
+    });
+    expect(recorded!.responseTokenHash).not.toBe(
+      createProposalResponseToken(current!.revisionId),
+    );
   });
 
   test("a repeated response is idempotent and cannot change the decision", async () => {
+    const current = await getPublishedProposalBySlug(slugs.proposalA);
     await expect(
       recordPublicProposalResponse({
         slug: slugs.proposalA,
-        decision: "DECLINED",
+        ...responseInput(current!.revisionId, "DECLINED"),
       }),
     ).resolves.toEqual({
       status: "already_recorded",

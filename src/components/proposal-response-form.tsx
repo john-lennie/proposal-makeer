@@ -17,11 +17,13 @@ export function ProposalResponseForm({
   acceptLabel,
   declineLabel,
   currentDecision,
+  responseToken,
 }: {
   slug: string;
   acceptLabel: string;
   declineLabel: string;
   currentDecision?: "ACCEPTED" | "DECLINED";
+  responseToken?: string;
 }) {
   const [state, action, pending] = useActionState(
     respondToProposalAction,
@@ -29,9 +31,56 @@ export function ProposalResponseForm({
   );
   const recordedDecision = state.decision ?? currentDecision;
 
+  if (!responseToken && !recordedDecision) {
+    return (
+      <div className="mt-10 border-t border-white/20 pt-7 text-center">
+        <p className="text-sm leading-6 text-white/65">
+          Use the private response link supplied by the proposal author to accept
+          or decline this proposal.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <form action={action} className="mt-10" aria-describedby="proposal-response-status">
       <input type="hidden" name="slug" value={slug} />
+      <input type="hidden" name="responseToken" value={responseToken ?? ""} />
+      {!recordedDecision && (
+        <div className="mx-auto mb-7 grid max-w-xl gap-4 text-left sm:grid-cols-2">
+          <label className="text-sm text-white/75">
+            Your name
+            <input
+              required
+              minLength={2}
+              maxLength={160}
+              name="respondentName"
+              autoComplete="name"
+              className="mt-2 w-full rounded-sm border border-white/25 bg-white/10 px-4 py-3 text-white outline-none focus:border-white/60"
+            />
+          </label>
+          <label className="text-sm text-white/75">
+            Your email
+            <input
+              required
+              maxLength={320}
+              name="respondentEmail"
+              type="email"
+              autoComplete="email"
+              className="mt-2 w-full rounded-sm border border-white/25 bg-white/10 px-4 py-3 text-white outline-none focus:border-white/60"
+            />
+          </label>
+          <label className="flex items-start gap-3 text-sm leading-6 text-white/75 sm:col-span-2">
+            <input required type="checkbox" name="confirmed" value="yes" className="mt-1 size-4" />
+            I confirm that I am authorized to respond to this proposal and that
+            the decision selected below will be recorded against this revision.
+          </label>
+          <label className="hidden" aria-hidden="true">
+            Website
+            <input name="website" tabIndex={-1} autoComplete="off" />
+          </label>
+        </div>
+      )}
       <div className="flex flex-col justify-center gap-3 sm:flex-row">
         <button
           type="submit"

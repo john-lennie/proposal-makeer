@@ -22,6 +22,7 @@ import type {
   ThemeSettings,
 } from "@/db/types";
 import { createDefaultProposalSections } from "@/lib/draft-proposal";
+import { proposalResponseUrl } from "@/lib/proposal-response-token";
 
 export interface EditableProposal {
   id: string;
@@ -39,6 +40,7 @@ export interface EditableProposal {
     currentRevisionNumber: number | null;
     currentPublishedAt: string | null;
     currentPublishedSlug: string | null;
+    currentResponseUrl: string | null;
     latestRevisionNumber: number;
     hasUnpublishedChanges: boolean;
   };
@@ -140,6 +142,9 @@ export async function getEditableProposal(
       currentRevisionNumber: currentRevision?.revisionNumber ?? null,
       currentPublishedAt: currentRevision?.publishedAt.toISOString() ?? null,
       currentPublishedSlug: currentRevision?.slug ?? null,
+      currentResponseUrl: currentRevision
+        ? proposalResponseUrl(currentRevision.slug, currentRevision.id)
+        : null,
       latestRevisionNumber: revisions[0]?.revisionNumber ?? 0,
       hasUnpublishedChanges:
         !currentRevision ||

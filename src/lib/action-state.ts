@@ -13,6 +13,7 @@ export interface PublicationActionState {
   status: "idle" | "success" | "error" | "conflict";
   message: string;
   publicUrl?: string;
+  responseUrl?: string;
   revisionNumber?: number;
 }
 

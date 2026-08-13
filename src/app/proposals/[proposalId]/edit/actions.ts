@@ -321,6 +321,7 @@ export async function publishProposalAction(
       status: "success",
       message: `Revision ${result.revisionNumber} is now published.`,
       publicUrl: result.publicUrl,
+      responseUrl: result.responseUrl,
       revisionNumber: result.revisionNumber,
     };
   } catch (error) {

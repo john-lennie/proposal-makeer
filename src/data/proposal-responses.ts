@@ -7,6 +7,10 @@ import {
   proposals,
 } from "@/db/schema";
 import { parseProposalContentSnapshot } from "@/lib/published-proposal";
+import {
+  hashProposalResponseMetadata,
+  verifyProposalResponseToken,
+} from "@/lib/proposal-response-token";
 
 export type ProposalDecision = "ACCEPTED" | "DECLINED";
 
@@ -19,6 +23,11 @@ export type ProposalResponseResult =
 export async function recordPublicProposalResponse(input: {
   slug: string;
   decision: ProposalDecision;
+  responseToken: string;
+  respondentName: string;
+  respondentEmail: string;
+  sourceIpHash?: string;
+  userAgent?: string;
   now?: Date;
 }): Promise<ProposalResponseResult> {
   return database.transaction(async (transaction) => {
@@ -64,7 +73,8 @@ export async function recordPublicProposalResponse(input: {
     if (
       published.passwordProtected ||
       !parseProposalContentSnapshot(published.content) ||
-      (published.expiresAt && published.expiresAt < now)
+      (published.expiresAt && published.expiresAt < now) ||
+      !verifyProposalResponseToken(published.revisionId, input.responseToken)
     ) {
       return {
         status: "unavailable",
@@ -86,6 +96,11 @@ export async function recordPublicProposalResponse(input: {
     await transaction.insert(proposalResponses).values({
       proposalRevisionId: published.revisionId,
       decision: input.decision,
+      respondentName: input.respondentName,
+      respondentEmail: input.respondentEmail,
+      responseTokenHash: hashProposalResponseMetadata(input.responseToken),
+      sourceIpHash: input.sourceIpHash,
+      userAgent: input.userAgent,
     });
 
     return { status: "ok", decision: input.decision };

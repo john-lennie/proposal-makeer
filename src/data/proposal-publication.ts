@@ -10,11 +10,13 @@ import {
 } from "@/db/schema";
 import type { ProposalContentSnapshot } from "@/db/types";
 import { validateProposalForPublication } from "@/lib/proposal-publication";
+import { proposalResponseUrl } from "@/lib/proposal-response-token";
 
 export type PublicationMutationResult =
   | {
       status: "ok";
       publicUrl: string;
+      responseUrl: string;
       revisionNumber: number;
       publishedAt: string;
       updatedAt: string;
@@ -236,6 +238,7 @@ export async function publishProposalDraft(input: {
     return {
       status: "ok",
       publicUrl: `/p/${proposal.slug}`,
+      responseUrl: proposalResponseUrl(proposal.slug, revision.id),
       revisionNumber,
       publishedAt: publishedAt.toISOString(),
       updatedAt: publishedAt.toISOString(),
@@ -328,6 +331,7 @@ export async function unpublishProposal(input: {
     return {
       status: "ok",
       publicUrl: `/p/${proposal.slug}`,
+      responseUrl: `/p/${proposal.slug}`,
       revisionNumber: 0,
       publishedAt: unpublishedAt.toISOString(),
       updatedAt: unpublishedAt.toISOString(),
