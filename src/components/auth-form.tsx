@@ -11,6 +11,7 @@ import {
 
 import { Mark } from "@/components/icons";
 import { authClient } from "@/lib/auth-client";
+import { isEmailVerificationRequired } from "@/lib/auth-errors";
 
 type AuthMode = "sign-in" | "sign-up" | "forgot-password" | "reset-password";
 type SignUpField = "name" | "email" | "password";
@@ -167,7 +168,7 @@ export function AuthForm({
           password,
           callbackURL,
         });
-        if (result.error?.code === "EMAIL_NOT_VERIFIED") {
+        if (isEmailVerificationRequired(result.error)) {
           setVerificationEmail(email);
           setMessage(
             "Verify your email to finish signing in. If your original link has expired or is missing, request a new verification email below.",
