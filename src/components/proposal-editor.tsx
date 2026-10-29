@@ -149,22 +149,22 @@ function SectionForm({
       <div className="editor-panel">
         <div className="grid gap-6 sm:grid-cols-2">
           <Field label="Proposal title" className="sm:col-span-2">
-            <input defaultValue={proposal.title} />
+            <input placeholder="Brand identity and launch" defaultValue={proposal.title} />
           </Field>
           <Field label="Prepared for">
-            <input defaultValue={proposal.client} />
+            <input placeholder="Alder House" defaultValue={proposal.client} />
           </Field>
           <Field label="Location">
-            <input defaultValue={proposal.clientLocation} />
+            <input placeholder="Toronto, Canada" defaultValue={proposal.clientLocation} />
           </Field>
           <Field label="Eyebrow" className="sm:col-span-2">
-            <input defaultValue={section.eyebrow} />
+            <input placeholder="A new chapter" defaultValue={section.eyebrow} />
           </Field>
           <Field label="Cover heading" hint="Keep this concise and memorable." className="sm:col-span-2">
-            <textarea rows={3} defaultValue={section.title} />
+            <textarea rows={3} placeholder="Give this section a clear heading" defaultValue={section.title} />
           </Field>
           <Field label="Introduction" className="sm:col-span-2">
-            <textarea rows={4} defaultValue={section.body} />
+            <textarea rows={4} placeholder="Introduce your approach to this project…" defaultValue={section.body} />
           </Field>
         </div>
       </div>
@@ -176,7 +176,7 @@ function SectionForm({
       <div className="editor-panel">
         <div className="grid gap-6">
           <Field label="Section heading">
-            <input defaultValue={section.title} />
+            <input placeholder="Give this section a clear heading" defaultValue={section.title} />
           </Field>
           <div>
             <div className="mb-3 flex items-center justify-between">
@@ -197,6 +197,7 @@ function SectionForm({
                   </div>
                   <input
                     aria-label={`${item.label} amount`}
+                    placeholder="0.00"
                     defaultValue={item.amount.toLocaleString("en-CA")}
                     className="text-right font-mono text-sm"
                   />
@@ -213,13 +214,13 @@ function SectionForm({
     <div className="editor-panel">
       <div className="grid gap-6">
         <Field label="Eyebrow">
-          <input defaultValue={section.eyebrow} />
+          <input placeholder="A new chapter" defaultValue={section.eyebrow} />
         </Field>
         <Field label="Section heading">
-          <textarea rows={2} defaultValue={section.title} />
+          <textarea rows={2} placeholder="Give this section a clear heading" defaultValue={section.title} />
         </Field>
         <Field label="Introduction">
-          <textarea rows={5} defaultValue={section.body} />
+          <textarea rows={5} placeholder="Introduce your approach to this project…" defaultValue={section.body} />
         </Field>
         <div className="rounded-lg border border-dashed border-ink/20 bg-[#f7f6f2] px-5 py-8 text-center">
           <p className="text-sm font-medium">{section.label} content</p>

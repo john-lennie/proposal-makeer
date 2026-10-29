@@ -357,6 +357,7 @@ function ProposalDetailsForm({ proposal }: { proposal: EditableProposal }) {
           <Field label="Proposal title" className="sm:col-span-2">
             <input
               name="title"
+              placeholder="Brand identity and launch"
               defaultValue={proposal.title}
               required
               maxLength={240}
@@ -365,6 +366,7 @@ function ProposalDetailsForm({ proposal }: { proposal: EditableProposal }) {
           <Field label="Client name">
             <input
               name="clientName"
+              placeholder="Alder House"
               defaultValue={proposal.client.name}
               required
               maxLength={160}
@@ -373,6 +375,7 @@ function ProposalDetailsForm({ proposal }: { proposal: EditableProposal }) {
           <Field label="Public slug" hint={`Public path: /p/${proposal.slug}`}>
             <input
               name="slug"
+              placeholder="alder-house-brand-identity"
               defaultValue={proposal.slug}
               required
               pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
@@ -418,6 +421,7 @@ function SectionForm({
           <Field label="Eyebrow">
             <input
               name="eyebrow"
+              placeholder="A new chapter"
               defaultValue={section.eyebrow}
               maxLength={120}
             />
@@ -425,6 +429,7 @@ function SectionForm({
           <Field label="Section heading">
             <textarea
               name="title"
+              placeholder="Give this section a clear heading"
               rows={2}
               defaultValue={section.title}
               required
@@ -451,6 +456,7 @@ function SectionContentFields({
           <Field label="Introduction">
             <textarea
               name="subtitle"
+              placeholder="Introduce the project and your approach…"
               rows={4}
               defaultValue={section.subtitle}
             />
@@ -459,6 +465,7 @@ function SectionContentFields({
             <Field label="Prepared for">
               <input
                 name="preparedFor"
+                placeholder="Client or company name"
                 defaultValue={section.preparedFor}
                 required
               />
@@ -466,15 +473,24 @@ function SectionContentFields({
             <Field label="Prepared by">
               <input
                 name="preparedBy"
+                placeholder="Your studio or consultancy"
                 defaultValue={section.preparedBy}
                 required
               />
             </Field>
             <Field label="Location">
-              <input name="location" defaultValue={section.location} />
+              <input
+                name="location"
+                placeholder="Toronto, Canada"
+                defaultValue={section.location}
+              />
             </Field>
             <Field label="Date label">
-              <input name="dateLabel" defaultValue={section.dateLabel} />
+              <input
+                name="dateLabel"
+                placeholder="Month and year"
+                defaultValue={section.dateLabel}
+              />
             </Field>
           </div>
         </>
@@ -484,6 +500,7 @@ function SectionContentFields({
         <Field label="Body copy">
           <textarea
             name="body"
+            placeholder="Describe this section of your proposal…"
             rows={9}
             defaultValue={section.body.blocks
               .flatMap((block) => block.text ?? block.items ?? [])
@@ -574,12 +591,19 @@ function SectionContentFields({
       return (
         <>
           <Field label="Closing message">
-            <textarea name="body" rows={5} defaultValue={section.body} required />
+            <textarea
+              name="body"
+              placeholder="Describe this section of your proposal…"
+              rows={5}
+              defaultValue={section.body}
+              required
+            />
           </Field>
           <div className="grid gap-6 sm:grid-cols-2">
             <Field label="Accept button label">
               <input
                 name="acceptLabel"
+                placeholder="Accept proposal"
                 defaultValue={section.acceptLabel}
                 required
               />
@@ -587,6 +611,7 @@ function SectionContentFields({
             <Field label="Decline button label">
               <input
                 name="declineLabel"
+                placeholder="Decline proposal"
                 defaultValue={section.declineLabel}
                 required
               />
@@ -600,7 +625,12 @@ function SectionContentFields({
 function IntroductionField({ value }: { value?: string }) {
   return (
     <Field label="Introduction">
-      <textarea name="introduction" rows={4} defaultValue={value} />
+      <textarea
+        name="introduction"
+        placeholder="Set the scene for this section…"
+        rows={4}
+        defaultValue={value}
+      />
     </Field>
   );
 }
@@ -616,7 +646,13 @@ function ListField({
 }) {
   return (
     <Field label={label} hint={hint}>
-      <textarea name="items" rows={8} defaultValue={value} required />
+      <textarea
+        name="items"
+        placeholder="Add one item per line…"
+        rows={8}
+        defaultValue={value}
+        required
+      />
     </Field>
   );
 }
@@ -644,11 +680,11 @@ function AddSectionForm({ proposal }: { proposal: EditableProposal }) {
         Add section
       </label>
       {availableSections.length > 0 ? (
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <select
             id="section-type"
             name="sectionType"
-            className="min-w-0 flex-1 rounded-md border border-ink/15 bg-white px-3 text-xs"
+            className="flex-1 px-3 text-xs"
             defaultValue={availableSections[0][0]}
           >
             {availableSections.map(([type, label]) => (
@@ -660,7 +696,7 @@ function AddSectionForm({ proposal }: { proposal: EditableProposal }) {
           <button
             type="submit"
             disabled={pending}
-            className="grid size-9 place-items-center rounded-full bg-ink text-paper disabled:opacity-50"
+            className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-paper disabled:opacity-50"
             aria-label="Add selected section"
           >
             <Plus />

@@ -38,7 +38,8 @@ body {
 button,
 a,
 input,
-textarea {
+textarea,
+select {
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -50,7 +51,8 @@ a {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
-textarea:focus-visible {
+textarea:focus-visible,
+select:focus-visible {
   outline: 2px solid #677057;
   outline-offset: 3px;
 }
@@ -160,31 +162,66 @@ button {
   letter-spacing: 0.04em;
 }
 
-.editor-panel input,
-.editor-panel textarea {
-  width: 100%;
-  border: 1px solid rgb(32 35 29 / 14%);
-  border-radius: 0.45rem;
-  background: white;
-  padding: 0.8rem 0.9rem;
-  color: #20231d;
-  font: inherit;
-  line-height: 1.5;
-  resize: vertical;
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease;
+/* Shared form controls; utilities can refine layout without duplicating styles. */
+@layer base {
+  :where(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]), textarea, select) {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 3rem;
+    border: 1px solid var(--field-border, rgb(32 35 29 / 22%));
+    border-radius: 0.5rem;
+    background: var(--field-background, #fffefa);
+    padding: 0.8rem 0.95rem;
+    color: var(--field-color, #20231d);
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  :where(input, textarea)::placeholder {
+    color: var(--field-placeholder, #77796e);
+    opacity: 1;
+    font-weight: 400;
+  }
+
+  :where(input, textarea, select):hover:not(:disabled) {
+    border-color: var(--field-hover, rgb(32 35 29 / 40%));
+  }
+
+  :where(input, textarea, select):focus-visible {
+    border-color: var(--field-focus, #677057);
+    box-shadow: 0 0 0 3px var(--field-ring, rgb(103 112 87 / 14%));
+  }
+
+  :where(input, textarea, select)[aria-invalid="true"] {
+    border-color: #b34235;
+  }
+
+  :where(input, textarea, select):disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  :where(input[type="checkbox"], input[type="radio"]) {
+    accent-color: #677057;
+    flex-shrink: 0;
+  }
 }
 
-.editor-panel input:hover,
-.editor-panel textarea:hover {
-  border-color: rgb(32 35 29 / 28%);
-}
-
-.editor-panel input:focus,
-.editor-panel textarea:focus {
-  border-color: #677057;
-  box-shadow: 0 0 0 3px rgb(103 112 87 / 12%);
+.form-fields-inverse {
+  --field-border: rgb(255 255 255 / 30%);
+  --field-background: rgb(255 255 255 / 8%);
+  --field-color: #fff;
+  --field-placeholder: rgb(255 255 255 / 60%);
+  --field-hover: rgb(255 255 255 / 50%);
+  --field-focus: #bdc5a8;
+  --field-ring: rgb(189 197 168 / 20%);
 }
 
 @media (prefers-reduced-motion: reduce) {

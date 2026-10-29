@@ -28,6 +28,7 @@ export function NewProposalForm() {
             minLength={3}
             maxLength={240}
             placeholder="Brand identity and launch"
+            aria-invalid={Boolean(state.fields?.title)}
             aria-describedby={state.fields?.title ? "title-error" : undefined}
           />
           {state.fields?.title && (
@@ -46,6 +47,7 @@ export function NewProposalForm() {
             minLength={2}
             maxLength={160}
             placeholder="Alder House"
+            aria-invalid={Boolean(state.fields?.clientName)}
             aria-describedby={
               state.fields?.clientName ? "client-error" : undefined
             }

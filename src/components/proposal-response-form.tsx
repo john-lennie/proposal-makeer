@@ -43,7 +43,7 @@ export function ProposalResponseForm({
   }
 
   return (
-    <form action={action} className="mt-10" aria-describedby="proposal-response-status">
+    <form action={action} className="form-fields-inverse mt-10" aria-describedby="proposal-response-status">
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="responseToken" value={responseToken ?? ""} />
       {!recordedDecision && (
@@ -55,8 +55,9 @@ export function ProposalResponseForm({
               minLength={2}
               maxLength={160}
               name="respondentName"
+              placeholder="Your full name"
               autoComplete="name"
-              className="mt-2 w-full rounded-sm border border-white/25 bg-white/10 px-4 py-3 text-white outline-none focus:border-white/60"
+              className="mt-2"
             />
           </label>
           <label className="text-sm text-white/75">
@@ -65,9 +66,10 @@ export function ProposalResponseForm({
               required
               maxLength={320}
               name="respondentEmail"
+              placeholder="you@yourcompany.com"
               type="email"
               autoComplete="email"
-              className="mt-2 w-full rounded-sm border border-white/25 bg-white/10 px-4 py-3 text-white outline-none focus:border-white/60"
+              className="mt-2"
             />
           </label>
           <label className="flex items-start gap-3 text-sm leading-6 text-white/75 sm:col-span-2">

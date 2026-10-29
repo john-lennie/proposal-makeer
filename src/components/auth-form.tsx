@@ -73,6 +73,8 @@ export function AuthForm({
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [resending, setResending] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<SignUpField, string>>
   >({});
@@ -84,12 +86,39 @@ export function AuthForm({
     const field = event.currentTarget.name as SignUpField;
     const value = event.currentTarget.value;
 
+    if (field === "email") setVerificationEmail("");
+
     if (mode !== "sign-up" || !touchedFields[field]) return;
 
     setFieldErrors((errors) => ({
       ...errors,
       [field]: validateSignUpField(field, value),
     }));
+  }
+
+  async function resendVerification() {
+    if (!verificationEmail || pending || resending) return;
+
+    setResending(true);
+    setIsError(false);
+    setMessage("");
+    try {
+      const result = await authClient.sendVerificationEmail({
+        email: verificationEmail,
+        callbackURL,
+      });
+      if (result.error) throw new Error(result.error.message);
+      setMessage(
+        `Verification email requested for ${verificationEmail}. Check your inbox and spam folder, then follow the link to finish signing in.`,
+      );
+    } catch {
+      setIsError(true);
+      setMessage(
+        "We couldn't send the verification email. Please wait a minute and try again.",
+      );
+    } finally {
+      setResending(false);
+    }
   }
 
   function validateOnBlur(event: FocusEvent<HTMLInputElement>) {
@@ -129,6 +158,7 @@ export function AuthForm({
     setPending(true);
     setMessage("");
     setIsError(false);
+    setVerificationEmail("");
 
     try {
       if (mode === "sign-in") {
@@ -137,6 +167,13 @@ export function AuthForm({
           password,
           callbackURL,
         });
+        if (result.error?.code === "EMAIL_NOT_VERIFIED") {
+          setVerificationEmail(email);
+          setMessage(
+            "Verify your email to finish signing in. If your original link has expired or is missing, request a new verification email below.",
+          );
+          return;
+        }
         if (result.error) throw new Error(result.error.message);
         router.push(callbackURL);
         router.refresh();
@@ -163,6 +200,7 @@ export function AuthForm({
             ? "Account created. Check your email to verify your address before signing in."
             : "Account created. You can now sign in.",
         );
+        if (requiresEmailVerification) setVerificationEmail(email);
         form.reset();
         setTouchedFields({});
         setFieldErrors({});
@@ -197,7 +235,9 @@ export function AuthForm({
         token,
       });
       if (result.error) throw new Error(result.error.message);
-      setMessage("Password reset. You can now sign in.");
+      setMessage(
+        "Password reset. Sign in with your new password. If your email still needs verification, you can request a new verification email on the sign-in screen.",
+      );
     } catch (error) {
       setIsError(true);
       setMessage(
@@ -236,6 +276,7 @@ export function AuthForm({
                 <span className="field-label">Name</span>
                 <input
                   name="name"
+                  placeholder="Your full name"
                   autoComplete="name"
                   required
                   minLength={2}
@@ -261,6 +302,7 @@ export function AuthForm({
                 <span className="field-label">Email</span>
                 <input
                   name="email"
+                  placeholder="you@yourstudio.com"
                   type="email"
                   autoComplete="email"
                   required
@@ -296,6 +338,11 @@ export function AuthForm({
                 </span>
                 <input
                   name="password"
+                  placeholder={
+                    mode === "sign-in"
+                      ? "Enter your password"
+                      : "At least 8 characters"
+                  }
                   type="password"
                   autoComplete={
                     mode === "sign-in" ? "current-password" : "new-password"
@@ -330,6 +377,7 @@ export function AuthForm({
                 <span className="field-label">Confirm new password</span>
                 <input
                   name="passwordConfirmation"
+                  placeholder="Re-enter your new password"
                   type="password"
                   autoComplete="new-password"
                   required
@@ -351,12 +399,23 @@ export function AuthForm({
 
             <button
               type="submit"
-              disabled={pending}
+              disabled={pending || resending}
               className="button button-dark mt-1 h-11 justify-center disabled:opacity-60"
             >
               {pending ? "Please wait…" : copy[mode].submit}
             </button>
           </form>
+
+          {verificationEmail && (
+            <button
+              type="button"
+              onClick={resendVerification}
+              disabled={pending || resending}
+              className="text-link mt-5 text-sm disabled:opacity-60"
+            >
+              {resending ? "Sending verification email…" : "Resend verification email"}
+            </button>
+          )}
 
           <div className="mt-6 flex flex-wrap justify-between gap-3 text-sm">
             {mode === "sign-in" && (
