@@ -89,7 +89,7 @@ export function ProposalResponseForm({
           name="decision"
           value="ACCEPTED"
           disabled={pending || Boolean(recordedDecision)}
-          className="button bg-[#d6dcbf] text-ink hover:bg-white disabled:cursor-not-allowed disabled:opacity-55"
+          className="button bg-[var(--brand-accent,#d6dcbf)] text-[var(--brand-on-accent,#20231d)] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
         >
           {recordedDecision === "ACCEPTED" ? "Proposal accepted" : acceptLabel}
         </button>

@@ -238,3 +238,77 @@ button {
     animation-iteration-count: 1 !important;
   }
 }
+
+.brand-proposal {
+  overflow-wrap: anywhere;
+}
+
+.brand-heading {
+  font-family: var(--brand-heading, Georgia, "Times New Roman", serif);
+}
+
+.brand-tint {
+  background: color-mix(in srgb, var(--brand-accent, #677057) 10%, #f5f1e8);
+}
+
+.brand-cover {
+  background: radial-gradient(ellipse at 90% 15%, color-mix(in srgb, var(--brand-accent, #677057) 25%, transparent), transparent 65%);
+}
+
+/* Both states share one text element; editing never substitutes form styling. */
+.inline-field-text {
+  display: inline-block;
+  min-width: 1ch;
+  max-width: 100%;
+  vertical-align: top;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  text-transform: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  outline: 1px dashed transparent;
+  outline-offset: 4px;
+  border-radius: 0.1rem;
+  cursor: text;
+}
+
+.inline-field-text:hover:not([aria-disabled="true"]),
+.inline-field-text:focus-visible,
+.inline-field-text[data-active="true"] {
+  outline-color: currentColor;
+}
+
+.inline-field-text[data-active="true"] {
+  caret-color: currentColor;
+}
+
+.inline-field-text[data-empty="true"]:empty::before {
+  content: attr(data-placeholder);
+  font-size: 0.875rem;
+  font-weight: 400;
+  font-style: italic;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.inline-field-toolbar {
+  position: fixed;
+  z-index: 60;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  border: 1px solid rgb(32 35 29 / 14%);
+  border-radius: 0.65rem;
+  background: #fbfaf7;
+  padding: 0.75rem;
+  color: #20231d;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  box-shadow: 0 8px 30px rgb(32 35 29 / 12%);
+}

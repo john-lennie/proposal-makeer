@@ -268,6 +268,7 @@ export function AuthForm({
           </h1>
 
           <form
+            method="post"
             onSubmit={submit}
             className="mt-8 grid gap-5"
             noValidate={mode === "sign-up"}

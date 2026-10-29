@@ -184,6 +184,7 @@ export const workspaces = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
     name: varchar("name", { length: 160 }).notNull(),
+    brandSettings: jsonb("brand_settings").$type<ThemeSettings>().default({}).notNull(),
     slug: varchar("slug", { length: 100 }).notNull(),
     status: workspaceStatusEnum("status").default("ACTIVE").notNull(),
     defaultCurrency: varchar("default_currency", { length: 3 })

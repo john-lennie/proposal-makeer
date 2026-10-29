@@ -187,7 +187,8 @@ function isThemeSettings(value: unknown): value is ThemeSettings {
     isRecord(value) &&
     isOptionalString(value.accentColor) &&
     isOptionalString(value.logoAssetUrl) &&
-    isOptionalString(value.displayName)
+    isOptionalString(value.displayName) &&
+    (value.headingStyle === undefined || value.headingStyle === "editorial" || value.headingStyle === "modern")
   );
 }
 

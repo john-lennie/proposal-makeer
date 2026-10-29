@@ -2,6 +2,7 @@ export interface ThemeSettings {
   accentColor?: string;
   logoAssetUrl?: string;
   displayName?: string;
+  headingStyle?: "editorial" | "modern";
 }
 
 export interface RichTextDocument {

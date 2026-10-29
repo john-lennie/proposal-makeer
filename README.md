@@ -177,3 +177,34 @@ all of the following before deploying the application for real users:
 Do not use Resend's test domain for a real launch. Production builds fail when
 email delivery is missing so verification cannot be accidentally disabled for
 real users.
+
+## Workspace branding and direct editing
+
+Open **Brand** from the application navigation (`/settings/brand`) to set the
+studio name, a publicly hosted HTTPS logo image URL, accent color, and heading
+style. Owners and admins can save workspace branding; other members can view it.
+Changes apply to all existing and future drafts. Published revisions retain their
+saved brand and content until the proposal is published again.
+
+From a proposal editor, choose **Edit on page**, or choose **Edit on page** in its
+private preview. Select a text field or price, make a change, and choose **Save**
+or **Cancel**. Enter saves single-line fields; Ctrl/Cmd+Enter saves multiline
+fields; Escape cancels. Each save checks the authenticated workspace and the
+current draft version. If another session changed the draft, refresh before
+retrying. Use **Sections & publish** to add/remove sections and publish changes.
+
+Apply migration `0003_damp_fixer` before deploying this feature:
+
+```bash
+pnpm db:migrate
+```
+
+Use the intended database's protected migration connection as described in
+[production database operations](docs/production-database.md). No migration runs
+automatically during application builds.
+
+Focused validation, permission, and rendering checks:
+
+```bash
+pnpm exec vitest run tests/brand.test.ts tests/inline-proposal.test.ts tests/brand-and-inline-actions.test.ts tests/proposal-rendering.test.tsx
+```

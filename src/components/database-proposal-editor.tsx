@@ -67,6 +67,8 @@ export function DatabaseProposalEditor({
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
+          <Link href={`/proposals/${proposal.id}/preview?edit=1`} className="button button-light h-10 px-4">Edit on page</Link>
+          <Link href="/settings/brand" className="text-link mx-2 text-sm">Brand</Link>
           <Link
             href={`/proposals/${proposal.id}/preview`}
             className="button button-light h-10 px-4"

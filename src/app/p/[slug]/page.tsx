@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
-import { ProposalDocument } from "@/components/proposal-document";
+import { StructuredProposalDocument } from "@/components/structured-proposal-document";
 import { ProposalResponseForm } from "@/components/proposal-response-form";
 import { PublicProposalNav } from "@/components/public-proposal-nav";
 import { getPublishedProposalBySlug } from "@/data/proposals";
-import { selectPublicProposal } from "@/lib/published-proposal";
+import { parseProposalContentSnapshot, selectPublicProposal } from "@/lib/published-proposal";
 import { verifyProposalResponseToken } from "@/lib/proposal-response-token";
 
 interface PublicProposalPageProps {
@@ -52,7 +52,8 @@ export default async function PublicProposalPage({
   const { response } = await searchParams;
   const { proposal, publishedRevision } = await getPublicProposal(slug);
 
-  if (!proposal) {
+  const snapshot = parseProposalContentSnapshot(publishedRevision?.content);
+  if (!proposal || !snapshot) {
     notFound();
   }
 
@@ -65,9 +66,10 @@ export default async function PublicProposalPage({
 
   return (
     <main>
-      <PublicProposalNav proposal={proposal} />
-      <ProposalDocument
-        proposal={proposal}
+      <PublicProposalNav proposal={proposal} theme={snapshot.theme} />
+      <StructuredProposalDocument
+        snapshot={snapshot}
+        revisionLabel={`Acceptance applies to revision ${proposal.revision}.`}
         responseForm={
           <ProposalResponseForm
             slug={slug}

@@ -6,7 +6,7 @@ import { Mark } from "@/components/icons";
 
 interface AppShellProps {
   children: ReactNode;
-  active?: "dashboard";
+  active?: "dashboard" | "brand";
   profile?: {
     name: string;
     email: string;
@@ -27,8 +27,8 @@ export function AppShell({ children, active, profile }: AppShellProps) {
   return (
     <div className="min-h-screen bg-[#f3f2ee] text-ink">
       <header className="border-b border-ink/10 bg-[#f8f7f3]">
-        <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
-          <div className="flex items-center gap-10">
+        <div className="mx-auto flex min-h-[72px] max-w-[1440px] flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-12">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-10">
             <Link
               href="/"
               aria-label="Sonder home"
@@ -37,7 +37,7 @@ export function AppShell({ children, active, profile }: AppShellProps) {
               <Mark className="size-6" />
               Sonder
             </Link>
-            <nav aria-label="Application navigation" className="hidden sm:block">
+            <nav aria-label="Application navigation" className="flex gap-4 sm:gap-6">
               <Link
                 href="/dashboard"
                 aria-current={active === "dashboard" ? "page" : undefined}
@@ -47,6 +47,7 @@ export function AppShell({ children, active, profile }: AppShellProps) {
               >
                 Proposals
               </Link>
+              <Link href="/settings/brand" aria-current={active === "brand" ? "page" : undefined} className={`text-sm ${active === "brand" ? "text-ink" : "text-ink/55"}`}>Brand</Link>
             </nav>
           </div>
           {profile && (

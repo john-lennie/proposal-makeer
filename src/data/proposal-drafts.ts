@@ -15,12 +15,14 @@ import {
   proposalRevisions,
   proposalSections,
   proposals,
+  workspaces,
 } from "@/db/schema";
 import type {
   ProposalSectionContent,
   ProposalSectionType,
   ThemeSettings,
 } from "@/db/types";
+import { resolveBrand } from "@/lib/brand";
 import { createDefaultProposalSections } from "@/lib/draft-proposal";
 import { proposalResponseUrl } from "@/lib/proposal-response-token";
 
@@ -80,6 +82,8 @@ export async function getEditableProposal(
       status: proposals.status,
       currency: proposals.currency,
       theme: proposals.themeSettings,
+      workspaceBrand: workspaces.brandSettings,
+      workspaceName: workspaces.name,
       clientId: clients.id,
       clientName: clients.name,
       updatedAt: proposals.updatedAt,
@@ -87,6 +91,7 @@ export async function getEditableProposal(
     })
     .from(proposals)
     .innerJoin(clients, eq(proposals.clientId, clients.id))
+    .innerJoin(workspaces, eq(proposals.workspaceId, workspaces.id))
     .where(
       and(
         eq(proposals.id, proposalId),
@@ -135,7 +140,7 @@ export async function getEditableProposal(
     slug: proposal.slug,
     status: proposal.status,
     currency: proposal.currency,
-    theme: proposal.theme,
+    theme: resolveBrand(proposal.workspaceBrand, { displayName: proposal.workspaceName, ...proposal.theme }),
     client: { id: proposal.clientId, name: proposal.clientName },
     updatedAt: proposal.updatedAt.toISOString(),
     publication: {
@@ -212,6 +217,10 @@ export async function createProposalDraft(input: {
 
   try {
     return await database.transaction(async (transaction) => {
+      const [workspace] = await transaction.select({ name: workspaces.name, brand: workspaces.brandSettings })
+        .from(workspaces).where(and(eq(workspaces.id, input.workspaceId), isNull(workspaces.deletedAt))).limit(1);
+      if (!workspace) throw new Error("Workspace not found.");
+      const studioName = workspace.brand.displayName ?? workspace.name;
       const [client] = await transaction
         .insert(clients)
         .values({
@@ -241,7 +250,7 @@ export async function createProposalDraft(input: {
           proposalId: proposal.id,
           type: content.type,
           position,
-          content,
+          content: content.type === "cover" ? { ...content, preparedBy: studioName } : content,
         })),
       );
 

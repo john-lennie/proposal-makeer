@@ -9,6 +9,7 @@ import {
   workspaces,
 } from "@/db/schema";
 import type { ProposalContentSnapshot } from "@/db/types";
+import { resolveBrand } from "@/lib/brand";
 import { validateProposalForPublication } from "@/lib/proposal-publication";
 import { proposalResponseUrl } from "@/lib/proposal-response-token";
 
@@ -81,6 +82,7 @@ export async function publishProposalDraft(input: {
         slug: proposals.slug,
         currency: proposals.currency,
         theme: proposals.themeSettings,
+        workspaceBrand: workspaces.brandSettings,
         expiresAt: proposals.expiresAt,
         updatedAt: proposals.updatedAt,
         currentPublishedRevisionId: proposals.currentPublishedRevisionId,
@@ -164,7 +166,7 @@ export async function publishProposalDraft(input: {
         clientOrganizationName: proposal.clientOrganizationName,
         workspaceName: proposal.workspaceName,
         currency: proposal.currency,
-        theme: proposal.theme,
+        theme: resolveBrand(proposal.workspaceBrand, { displayName: proposal.workspaceName, ...proposal.theme }),
         sections: sections.map(({ content }) => content),
         expiresAt: proposal.expiresAt,
       }),
